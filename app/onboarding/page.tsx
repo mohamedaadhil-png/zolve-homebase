@@ -15,6 +15,12 @@ interface Step {
   title: string
   field: 'status_type' | 'visa_status' | 'grad_year' | 'preferred_role'
   options: Option[]
+
+
+
+
+
+  
 }
 
 // Values match the DB CHECK constraints + API Zod schema exactly.
