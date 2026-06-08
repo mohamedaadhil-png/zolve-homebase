@@ -43,7 +43,7 @@ export default function FeatureBento() {
           </h2>
           <a
             href="/jobs"
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-navy text-white text-sm font-semibold rounded-full hover:bg-navy-800 transition-colors duration-200 cursor-pointer self-start sm:self-auto"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#131310] text-white text-sm font-semibold rounded-full hover:bg-[#1f1f1c] transition-colors duration-200 cursor-pointer self-start sm:self-auto"
           >
             Browse jobs <ArrowUpRight className="w-4 h-4" aria-hidden="true" />
           </a>
@@ -52,7 +52,7 @@ export default function FeatureBento() {
         {/* Bento grid */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Card 1 — large, dark */}
-          <div className="sm:col-span-2 lg:row-span-1 bg-navy rounded-3xl p-7 text-white relative overflow-hidden min-h-[240px] flex flex-col justify-between">
+          <div className="sm:col-span-2 lg:row-span-1 bg-[#131310] rounded-3xl p-7 text-white relative overflow-hidden min-h-[240px] flex flex-col justify-between">
             <div
               className="absolute -right-8 -top-8 w-40 h-40 rounded-full bg-[#ff6633]/20 blur-2xl"
               aria-hidden="true"
@@ -115,7 +115,7 @@ export default function FeatureBento() {
 
           {/* Card 5 */}
           <div className="sm:col-span-2 bg-white rounded-3xl p-7 border border-navy-100 flex items-center gap-6 min-h-[180px]">
-            <div className="w-12 h-12 rounded-xl bg-navy flex items-center justify-center flex-shrink-0">
+            <div className="w-12 h-12 rounded-xl bg-[#131310] flex items-center justify-center flex-shrink-0">
               <Sparkles className="w-6 h-6 text-[#ff6633]" aria-hidden="true" />
             </div>
             <div>

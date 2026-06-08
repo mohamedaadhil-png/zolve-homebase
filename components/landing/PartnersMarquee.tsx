@@ -62,7 +62,7 @@ interface PartnersMarqueeProps {
 
 export default function PartnersMarquee({ jobCount, companyCount }: PartnersMarqueeProps) {
   return (
-    <section className="relative bg-navy text-white py-20 sm:py-28 overflow-hidden" aria-label="Hiring partners">
+    <section className="relative bg-[#131310] text-white py-20 sm:py-28 overflow-hidden" aria-label="Hiring partners">
       {/* subtle grid texture */}
       <div
         className="absolute inset-0 opacity-[0.04]"
@@ -115,8 +115,8 @@ export default function PartnersMarquee({ jobCount, companyCount }: PartnersMarq
       {/* Logo marquees — full bleed */}
       <div className="relative space-y-3">
         {/* edge fade masks */}
-        <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-24 sm:w-40 bg-gradient-to-r from-navy to-transparent z-10" aria-hidden="true" />
-        <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-24 sm:w-40 bg-gradient-to-l from-navy to-transparent z-10" aria-hidden="true" />
+        <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-24 sm:w-40 bg-gradient-to-r from-[#131310] to-transparent z-10" aria-hidden="true" />
+        <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-24 sm:w-40 bg-gradient-to-l from-[#131310] to-transparent z-10" aria-hidden="true" />
         <MarqueeRow items={ROW_ONE} />
         <MarqueeRow items={ROW_TWO} reverse />
       </div>

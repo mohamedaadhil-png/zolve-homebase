@@ -36,7 +36,7 @@ export default function VideoSection() {
         </div>
 
         {/* Video frame */}
-        <div className="relative rounded-3xl overflow-hidden bg-navy aspect-video group">
+        <div className="relative rounded-3xl overflow-hidden bg-[#131310] aspect-video group">
           {hasVideo ? (
             <>
               <video

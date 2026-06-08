@@ -8,7 +8,7 @@ const LINKS = {
 
 export default function FooterSection() {
   return (
-    <footer className="bg-navy border-t border-navy-800" aria-label="Footer">
+    <footer className="bg-[#131310] border-t border-white/10" aria-label="Footer">
       <div className="max-w-6xl mx-auto px-6 py-14">
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
           {/* Brand */}
@@ -46,7 +46,7 @@ export default function FooterSection() {
           ))}
         </div>
 
-        <div className="border-t border-navy-800 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <div className="border-t border-white/10 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-navy-500 text-sm">
             © {new Date().getFullYear()} Zolve. All rights reserved.
           </p>

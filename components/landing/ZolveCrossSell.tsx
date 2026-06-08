@@ -31,7 +31,7 @@ const PRODUCTS = [
 
 export default function ZolveCrossSell() {
   return (
-    <section className="bg-navy text-white py-20 sm:py-28 relative overflow-hidden" aria-label="Zolve products">
+    <section className="bg-[#131310] text-white py-20 sm:py-28 relative overflow-hidden" aria-label="Zolve products">
       {/* glow */}
       <div
         className="absolute -top-24 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-[#ff6633]/10 blur-[120px] rounded-full"
