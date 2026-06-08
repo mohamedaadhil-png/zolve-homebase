@@ -120,9 +120,10 @@ export default async function DashboardPage() {
           {
             icon: Calendar,
             title: 'Events',
-            desc: 'Visa workshops, career fairs, and webinars',
+            desc: 'Visa webinars, mock interviews, and live sessions',
             href: '/events',
-            color: 'bg-green-50 text-green-600',
+            color: 'bg-[#fff1ec] text-[#ff6633]',
+            live: true,
           },
         ].map(item => (
           <Link
@@ -135,9 +136,15 @@ export default async function DashboardPage() {
             </div>
             <h3 className="font-semibold text-[#0F172A] mb-1">
               {item.title}{' '}
-              <span className="text-xs font-normal text-slate-400 bg-slate-50 px-2 py-0.5 rounded-full">
-                Coming Soon
-              </span>
+              {item.live ? (
+                <span className="text-xs font-semibold text-[#ff6633] bg-[#fff1ec] px-2 py-0.5 rounded-full">
+                  Live
+                </span>
+              ) : (
+                <span className="text-xs font-normal text-slate-400 bg-slate-50 px-2 py-0.5 rounded-full">
+                  Coming Soon
+                </span>
+              )}
             </h3>
             <p className="text-sm text-slate-500">{item.desc}</p>
           </Link>

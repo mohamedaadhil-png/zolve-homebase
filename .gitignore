@@ -42,3 +42,12 @@ build/
 # Claude Code local settings (may contain tokens)
 .claude/settings.local.json
 .auto-push-test
+
+# Local gov data CSVs (not committed)
+gov-data/
+
+# Scratch / reference screenshots — not committed
+useless-data/
+
+# gov-data ingestion scripts (contain embedded keys) + logs
+scripts/gov-data/

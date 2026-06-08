@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(*)",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('scripts:'\\); [print\\(' ',k,'->',v\\) for k,v in d.get\\('scripts',{}\\).items\\(\\)]\")",
+      "Read(//usr/local/bin/**)",
+      "Read(//Users/agamsachan/.nvm/**)",
+      "WebSearch",
+      "WebFetch(domain:account.zolve.com)"
+    ]
+  }
+}

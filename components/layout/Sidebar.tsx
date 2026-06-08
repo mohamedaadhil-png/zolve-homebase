@@ -27,7 +27,7 @@ const navItems: NavItem[] = [
   { href: '/sponsor-directory', label: 'Sponsor Directory', icon: Building2 },
   { href: '/upskill', label: 'Upskill', icon: GraduationCap, soon: true },
   { href: '/networking', label: 'Networking', icon: Users, soon: true },
-  { href: '/events', label: 'Events', icon: Calendar, soon: true },
+  { href: '/events', label: 'Events', icon: Calendar },
   { href: '/resources', label: 'Resource Library', icon: BookOpen, soon: true },
 ]
 
