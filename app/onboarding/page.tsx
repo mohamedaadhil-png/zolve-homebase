@@ -17,19 +17,6 @@ interface Step {
   options: Option[]
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 // Values match the DB CHECK constraints + API Zod schema exactly.
 const STEPS: Step[] = [
   {
