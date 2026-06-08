@@ -42,7 +42,7 @@ export default async function DashboardLayout({
         </aside>
 
         {/* Main content */}
-        <main className="flex-1 md:ml-60 min-h-[calc(100vh-3.5rem)] pb-20 md:pb-0">
+        <main className="flex-1 md:ml-60 min-h-[calc(100vh-3.5rem)] pb-20 md:pb-0 overflow-hidden">
           {children}
         </main>
       </div>

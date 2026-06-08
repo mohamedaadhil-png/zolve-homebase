@@ -7,6 +7,7 @@ import LoggedOutNav from '@/components/layout/LoggedOutNav'
 import HeroSection from './HeroSection'
 import PartnersMarquee from './PartnersMarquee'
 import JobPreviewSection from './JobPreviewSection'
+import CareerPlatformPinnedSection from './CareerPlatformPinnedSection'
 import VideoSection from './VideoSection'
 import FeatureBento from './FeatureBento'
 import JourneyFeatures from './JourneyFeatures'
@@ -65,7 +66,9 @@ export default function LandingPageClient({ jobCount, companyCount = 31 }: Landi
       <PartnersMarquee jobCount={jobCount} companyCount={companyCount} />
       {/* 3 — Live job preview */}
       <JobPreviewSection jobs={previewJobs} totalCount={jobCount} onEnroll={handleEnroll} />
-      {/* 4 — Product demo video */}
+      {/* 4 — Pinned scroll: Upskill / Events / Resources */}
+      <CareerPlatformPinnedSection />
+      {/* 5 — Product demo video */}
       <VideoSection />
       {/* 5 — Feature bento */}
       <FeatureBento />

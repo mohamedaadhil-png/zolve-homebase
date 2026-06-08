@@ -143,7 +143,7 @@ function JobsContent() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-[#0F172A]">Sponsored Jobs</h1>
+        <h1 className="text-2xl font-bold text-[#0F172A]">Live Jobs</h1>
         <p className="text-slate-500 mt-1">H-1B sponsored positions from verified employers</p>
       </div>
 

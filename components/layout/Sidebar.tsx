@@ -8,6 +8,7 @@ import {
   Users,
   Calendar,
   BookOpen,
+  Building2,
   LogOut,
 } from 'lucide-react'
 import Link from 'next/link'
@@ -22,7 +23,8 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { href: '/dashboard', label: 'Home', icon: Home },
-  { href: '/jobs', label: 'Sponsored Jobs', icon: Briefcase },
+  { href: '/jobs', label: 'Live Jobs', icon: Briefcase },
+  { href: '/sponsor-directory', label: 'Sponsor Directory', icon: Building2 },
   { href: '/upskill', label: 'Upskill', icon: GraduationCap, soon: true },
   { href: '/networking', label: 'Networking', icon: Users, soon: true },
   { href: '/events', label: 'Events', icon: Calendar, soon: true },
