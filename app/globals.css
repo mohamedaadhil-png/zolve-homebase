@@ -1,0 +1,79 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fraunces:ital,opsz,wght@1,9..144,400;1,9..144,500;0,9..144,600&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: #F8FAFC;
+    color: #0F172A;
+  }
+}
+
+@layer utilities {
+  .font-serif-accent {
+    font-family: 'Fraunces', Georgia, serif;
+    font-style: italic;
+    font-weight: 500;
+  }
+}
+
+/* Infinite logo marquee */
+@keyframes marquee-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee-scroll 40s linear infinite;
+}
+.animate-marquee-slow {
+  animation: marquee-scroll 60s linear infinite;
+}
+.marquee-pause:hover .animate-marquee,
+.marquee-pause:hover .animate-marquee-slow {
+  animation-play-state: paused;
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 bg-brand text-white font-semibold rounded-xl hover:bg-brand-hover transition-colors duration-200 cursor-pointer;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 bg-white text-navy border border-navy-200 font-semibold rounded-xl hover:bg-navy-50 transition-colors duration-200 cursor-pointer;
+  }
+
+  .card {
+    @apply bg-white rounded-2xl border border-navy-200 p-6;
+  }
+
+  .sponsor-badge {
+    @apply inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded-full border border-emerald-200;
+  }
+
+  .tag {
+    @apply inline-flex items-center px-2.5 py-0.5 bg-navy-100 text-navy-700 text-xs font-medium rounded-full;
+  }
+
+  .score-chip {
+    @apply inline-flex items-center gap-1.5 px-3 py-1.5 bg-brand-light text-brand text-sm font-bold rounded-lg;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
