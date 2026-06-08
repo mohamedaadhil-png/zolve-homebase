@@ -2,6 +2,14 @@
 
 A Next.js job platform for H-1B visa sponsorship tracking. Helps international professionals find software engineering roles at companies with verified sponsorship history, backed by USCIS and DOL government data.
 
+## Documentation
+
+| Doc | Description |
+|---|---|
+| [docs/SETUP.md](./docs/SETUP.md) | Local development setup (step-by-step) |
+| [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) | Tech stack, repo structure, and backend walkthrough |
+| [docs/GIT-WORKFLOW.md](./docs/GIT-WORKFLOW.md) | Git commands, push/pull, and branching strategy |
+
 ## Tech Stack
 
 - **Framework**: Next.js 14 App Router (TypeScript)
