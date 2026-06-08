@@ -1,54 +1,48 @@
 'use client'
 
-// Real recruiter logos via Clearbit. Two rows scrolling in opposite directions.
-const ROW_ONE = [
-  { name: 'Databricks', domain: 'databricks.com' },
-  { name: 'Stripe', domain: 'stripe.com' },
-  { name: 'Anthropic', domain: 'anthropic.com' },
-  { name: 'Airbnb', domain: 'airbnb.com' },
-  { name: 'Roblox', domain: 'roblox.com' },
-  { name: 'Pinterest', domain: 'pinterest.com' },
-  { name: 'Figma', domain: 'figma.com' },
-  { name: 'Cloudflare', domain: 'cloudflare.com' },
-  { name: 'Reddit', domain: 'reddit.com' },
-]
-const ROW_TWO = [
-  { name: 'DoorDash', domain: 'doordash.com' },
-  { name: 'Discord', domain: 'discord.com' },
-  { name: 'Dropbox', domain: 'dropbox.com' },
-  { name: 'Datadog', domain: 'datadoghq.com' },
-  { name: 'Affirm', domain: 'affirm.com' },
-  { name: 'Robinhood', domain: 'robinhood.com' },
-  { name: 'Twilio', domain: 'twilio.com' },
-  { name: 'GitLab', domain: 'gitlab.com' },
-  { name: 'Instacart', domain: 'instacart.com' },
+// All logos are local files in /public/logos/
+const ALL_LOGOS = [
+  { name: 'Google',     src: '/logos/google.png' },
+  { name: 'Amazon',     src: '/logos/amazon.png' },
+  { name: 'Microsoft',  src: '/logos/microsoft.png' },
+  { name: 'Meta',       src: '/logos/meta.png' },
+  { name: 'Stripe',     src: '/logos/stripe.png' },
+  { name: 'Walmart',    src: '/logos/walmart.png' },
+  { name: 'Airbnb',     src: '/logos/airbnb.png' },
+  { name: 'Anthropic',  src: '/logos/anthropic.png' },
+  { name: 'Databricks', src: '/logos/databricks.png' },
+  { name: 'Datadog',    src: '/logos/datadog.webp' },
+  { name: 'Roblox',     src: '/logos/roblox.webp' },
 ]
 
-function LogoPill({ name, domain }: { name: string; domain: string }) {
+// Split into two rows, interleaved so each row looks different
+const ROW_ONE = ALL_LOGOS.filter((_, i) => i % 2 === 0)   // Google, Microsoft, Stripe, Airbnb, Databricks, Roblox
+const ROW_TWO = ALL_LOGOS.filter((_, i) => i % 2 !== 0)   // Amazon, Meta, Walmart, Anthropic, Datadog
+
+function LogoPill({ name, src }: { name: string; src: string }) {
   return (
-    <div className="flex-none flex items-center gap-2.5 px-6 py-3.5 bg-white rounded-2xl mx-2 min-w-[180px] justify-center shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+    <div className="flex-none flex items-center justify-center px-7 py-3 bg-white rounded-2xl mx-2 h-[60px] min-w-[160px]">
       <img
-        src={`https://logo.clearbit.com/${domain}`}
+        src={src}
         alt={`${name} logo`}
-        className="w-6 h-6 object-contain"
+        className="max-h-[30px] w-auto max-w-[150px] object-contain"
         loading="lazy"
-        onError={(e) => ((e.target as HTMLImageElement).style.display = 'none')}
       />
-      <span className="font-semibold text-navy text-[15px] whitespace-nowrap">{name}</span>
     </div>
   )
 }
 
 function MarqueeRow({ items, reverse }: { items: typeof ROW_ONE; reverse?: boolean }) {
-  const doubled = [...items, ...items]
+  // Triple the items so the loop is seamless even on wide screens
+  const repeated = [...items, ...items, ...items]
   return (
     <div className="flex overflow-hidden marquee-pause" aria-hidden="true">
       <div
         className={`flex ${reverse ? 'animate-marquee-slow' : 'animate-marquee'}`}
-        style={reverse ? { flexDirection: 'row-reverse' } : undefined}
+        style={reverse ? { animationDirection: 'reverse' } : undefined}
       >
-        {doubled.map((c, i) => (
-          <LogoPill key={`${c.name}-${i}`} name={c.name} domain={c.domain} />
+        {repeated.map((c, i) => (
+          <LogoPill key={`${c.name}-${i}`} name={c.name} src={c.src} />
         ))}
       </div>
     </div>
@@ -63,7 +57,7 @@ interface PartnersMarqueeProps {
 export default function PartnersMarquee({ jobCount, companyCount }: PartnersMarqueeProps) {
   return (
     <section className="relative bg-[#131310] text-white py-20 sm:py-28 overflow-hidden" aria-label="Hiring partners">
-      {/* subtle grid texture */}
+      {/* Subtle grid texture */}
       <div
         className="absolute inset-0 opacity-[0.04]"
         style={{
@@ -76,7 +70,7 @@ export default function PartnersMarquee({ jobCount, companyCount }: PartnersMarq
 
       <div className="relative max-w-6xl mx-auto px-6">
         <div className="grid lg:grid-cols-[1fr_1.3fr] gap-12 lg:gap-16 items-start mb-16">
-          {/* Left: eyebrow */}
+          {/* Left */}
           <div>
             <div className="flex items-center gap-2 mb-5">
               <span className="w-1.5 h-1.5 rounded-full bg-[#ff6633]" aria-hidden="true" />
@@ -90,7 +84,7 @@ export default function PartnersMarquee({ jobCount, companyCount }: PartnersMarq
             </h2>
           </div>
 
-          {/* Right: subtext + stats */}
+          {/* Right */}
           <div className="lg:pt-2">
             <p className="text-white/60 text-lg leading-relaxed mb-10 max-w-xl">
               Every employer on Home Base has a verified H-1B sponsorship track record drawn from
@@ -99,8 +93,8 @@ export default function PartnersMarquee({ jobCount, companyCount }: PartnersMarq
             <div className="grid grid-cols-3 gap-6">
               {[
                 { value: `${jobCount.toLocaleString()}+`, label: 'Sponsored roles live now' },
-                { value: `${companyCount}`, label: 'Verified sponsor companies' },
-                { value: 'Gov.', label: 'USCIS + DOL verified data' },
+                { value: `${companyCount}`,               label: 'Verified sponsor companies' },
+                { value: 'Gov.',                          label: 'USCIS + DOL verified data' },
               ].map((stat) => (
                 <div key={stat.label}>
                   <p className="text-3xl sm:text-4xl font-bold text-[#ff6633] tracking-tight">{stat.value}</p>
@@ -112,9 +106,8 @@ export default function PartnersMarquee({ jobCount, companyCount }: PartnersMarq
         </div>
       </div>
 
-      {/* Logo marquees — full bleed */}
+      {/* Marquee rows — full bleed */}
       <div className="relative space-y-3">
-        {/* edge fade masks */}
         <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-24 sm:w-40 bg-gradient-to-r from-[#131310] to-transparent z-10" aria-hidden="true" />
         <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-24 sm:w-40 bg-gradient-to-l from-[#131310] to-transparent z-10" aria-hidden="true" />
         <MarqueeRow items={ROW_ONE} />
