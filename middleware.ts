@@ -25,9 +25,14 @@ export async function middleware(request: NextRequest) {
     }
   )
 
+  // Use getSession() here (reads/decodes the cookie locally, no network call) for
+  // routing decisions. getUser() makes a network call to Supabase that can fail on
+  // Vercel's Edge runtime and wipe the session cookie. Authoritative validation
+  // still happens at the page/layout level (server components, Node runtime).
   const {
-    data: { user },
-  } = await supabase.auth.getUser()
+    data: { session },
+  } = await supabase.auth.getSession()
+  const user = session?.user ?? null
 
   const { pathname } = request.nextUrl
 
