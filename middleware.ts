@@ -31,6 +31,15 @@ export async function middleware(request: NextRequest) {
 
   const { pathname } = request.nextUrl
 
+  // Redirect while preserving any refreshed Supabase auth cookies. Returning a
+  // bare NextResponse.redirect drops them, which logs the user out on the next
+  // request (the "keeps asking me to sign in" loop).
+  const redirectTo = (path: string) => {
+    const res = NextResponse.redirect(new URL(path, request.url))
+    supabaseResponse.cookies.getAll().forEach((cookie) => res.cookies.set(cookie))
+    return res
+  }
+
   // ── Pre-launch gate ─────────────────────────────────────────────────────────
   // When PRELAUNCH=true, the public can only reach the waitlist. Emails listed in
   // PRELAUNCH_ALLOW (comma-separated) see the full product, including "/".
@@ -61,7 +70,7 @@ export async function middleware(request: NextRequest) {
         })
 
       if (!isAllowed) {
-        return NextResponse.redirect(new URL('/waitlist', request.url))
+        return redirectTo('/waitlist')
       }
     }
   }
@@ -71,12 +80,12 @@ export async function middleware(request: NextRequest) {
     (pathname.startsWith('/dashboard') || pathname.startsWith('/profile')) &&
     !user
   ) {
-    return NextResponse.redirect(new URL('/login', request.url))
+    return redirectTo('/login')
   }
 
   // Redirect logged-in users away from login
   if (pathname === '/login' && user) {
-    return NextResponse.redirect(new URL('/dashboard', request.url))
+    return redirectTo('/dashboard')
   }
 
   // Check onboarding for authenticated users accessing protected routes
@@ -88,7 +97,7 @@ export async function middleware(request: NextRequest) {
       .single()
 
     if (userData && userData.onboarding_complete === false) {
-      return NextResponse.redirect(new URL('/onboarding', request.url))
+      return redirectTo('/onboarding')
     }
   }
 
