@@ -6,9 +6,11 @@ import { useEffect, useState } from 'react'
 
 interface LoggedOutNavProps {
   onSignIn?: () => void
+  /** Overrides the nav button label (e.g. "Join the waitlist"). */
+  ctaLabel?: string
 }
 
-export default function LoggedOutNav({ onSignIn }: LoggedOutNavProps) {
+export default function LoggedOutNav({ onSignIn, ctaLabel }: LoggedOutNavProps) {
   const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
@@ -43,12 +45,12 @@ export default function LoggedOutNav({ onSignIn }: LoggedOutNavProps) {
         </span>
       </Link>
 
-      {/* Sign In */}
+      {/* Sign In / Join the waitlist */}
       <button
         onClick={onSignIn}
         className="px-5 py-2.5 text-sm font-semibold bg-[#ff6633] text-white rounded-lg hover:bg-[#e5572b] cursor-pointer transition-all duration-150"
       >
-        Sign In
+        {ctaLabel ?? 'Sign In'}
       </button>
     </nav>
   )

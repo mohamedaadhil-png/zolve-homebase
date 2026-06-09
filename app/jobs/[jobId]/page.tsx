@@ -83,7 +83,7 @@ export default async function PublicJobDetailPage({ params }: PageProps) {
     job.is_active && 'Active Hiring Employer',
     job.posted_at && new Date(job.posted_at as string) > new Date(Date.now() - 7 * 86400000) && 'Recently Posted',
     typeof score === 'number' && score >= 70 && 'Strong Sponsorship History',
-    job.role_category === 'SWE' && 'High Demand Role',
+    (job.role_category === 'software_engineering' || job.role_category === 'data_ai') && 'High Demand Role',
   ].filter(Boolean) as string[]
 
   return (

@@ -230,7 +230,7 @@ export default function ProfilePage() {
       <ProfileCompletionCard completionPercent={completion} />
 
       {/* Avatar */}
-      <div className="bg-white rounded-2xl border border-slate-100 p-6">
+      <div id="profile-details" className="bg-white rounded-2xl border border-slate-100 p-6 scroll-mt-6">
         <h2 className="font-semibold text-[#0F172A] mb-4">Photo</h2>
         <div className="flex items-center gap-4">
           <div className="w-16 h-16 rounded-full bg-gradient-to-br from-orange-100 to-orange-200 flex items-center justify-center text-xl font-bold text-[#ff6633]">

@@ -80,6 +80,31 @@ export default function EventsBrowser() {
   const [saved, setSaved] = useState<Set<string>>(new Set())
   const [registered, setRegistered] = useState<Set<string>>(new Set())
   const [registeringId, setRegisteringId] = useState<string | null>(null)
+  const [highlightId, setHighlightId] = useState<string | null>(null)
+
+  // Deep-link from global search: /events#event-<id> → scroll to + briefly highlight that card.
+  // Runs on mount (fresh navigation) and on hashchange (searching while already here).
+  useEffect(() => {
+    let clearTimer: ReturnType<typeof setTimeout>
+    function jumpToHash() {
+      const hash = window.location.hash // e.g. "#event-visa_webinar_21dec_past"
+      if (!hash.startsWith('#event-')) return
+      const domId = decodeURIComponent(hash.slice(1))
+      setHighlightId(domId.replace(/^event-/, ''))
+      // Defer one tick so the target card is painted before scrolling
+      setTimeout(() => {
+        document.getElementById(domId)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }, 100)
+      clearTimeout(clearTimer)
+      clearTimer = setTimeout(() => setHighlightId(null), 2800)
+    }
+    jumpToHash()
+    window.addEventListener('hashchange', jumpToHash)
+    return () => {
+      clearTimeout(clearTimer)
+      window.removeEventListener('hashchange', jumpToHash)
+    }
+  }, [])
 
   // Prefill the user's existing registrations (best-effort; ignore if API/table absent)
   useEffect(() => {
@@ -274,6 +299,7 @@ export default function EventsBrowser() {
                   isSaved={saved.has(e.id)}
                   isRegistered={registered.has(e.id)}
                   registering={registeringId === e.id}
+                  highlight={highlightId === e.id}
                   onSave={toggleSaved}
                   onRegister={handleRegister}
                 />
@@ -289,6 +315,7 @@ export default function EventsBrowser() {
                   isSaved={saved.has(e.id)}
                   isRegistered={registered.has(e.id)}
                   registering={false}
+                  highlight={highlightId === e.id}
                   onSave={toggleSaved}
                   onRegister={handleRegister}
                 />

@@ -7,6 +7,10 @@ import { cn } from '@/lib/utils'
 interface HeroSectionProps {
   jobCount: number
   onEnroll: () => void
+  /** Overrides the primary CTA label (e.g. "Join the waitlist"). */
+  ctaLabel?: string
+  /** Hides the secondary "Browse jobs" link (used in waitlist mode). */
+  hideSecondaryCta?: boolean
 }
 
 function AnimatedCount({ target }: { target: number }) {
@@ -28,7 +32,7 @@ function AnimatedCount({ target }: { target: number }) {
   return <span>{current.toLocaleString()}</span>
 }
 
-export default function HeroSection({ jobCount, onEnroll }: HeroSectionProps) {
+export default function HeroSection({ jobCount, onEnroll, ctaLabel, hideSecondaryCta }: HeroSectionProps) {
   const scrollRef = useRef<HTMLDivElement>(null)
 
   const scrollToNext = () => {
@@ -98,15 +102,17 @@ export default function HeroSection({ jobCount, onEnroll }: HeroSectionProps) {
               onClick={onEnroll}
               className="inline-flex items-center gap-2 px-8 py-4 bg-[#ff6633] hover:bg-[#e5572b] text-white font-bold text-base rounded-xl transition-colors duration-200 cursor-pointer shadow-lg"
             >
-              Enroll today
+              {ctaLabel ?? 'Enroll today'}
               <ChevronRight className="w-5 h-5" aria-hidden="true" />
             </button>
-            <a
-              href="/jobs"
-              className="inline-flex items-center gap-1.5 px-6 py-4 text-white/90 hover:text-white font-semibold text-base underline-offset-4 hover:underline transition-colors duration-200 cursor-pointer"
-            >
-              Browse jobs →
-            </a>
+            {!hideSecondaryCta && (
+              <a
+                href="/jobs"
+                className="inline-flex items-center gap-1.5 px-6 py-4 text-white/90 hover:text-white font-semibold text-base underline-offset-4 hover:underline transition-colors duration-200 cursor-pointer"
+              >
+                Browse jobs →
+              </a>
+            )}
           </div>
         </div>
       </div>

@@ -6,7 +6,8 @@
       "Read(//usr/local/bin/**)",
       "Read(//Users/agamsachan/.nvm/**)",
       "WebSearch",
-      "WebFetch(domain:account.zolve.com)"
+      "WebFetch(domain:account.zolve.com)",
+      "WebFetch(domain:www.zolve.com)"
     ]
   }
 }

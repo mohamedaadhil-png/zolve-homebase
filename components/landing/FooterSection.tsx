@@ -1,9 +1,30 @@
 import { ShieldCheck } from 'lucide-react'
+import Link from 'next/link'
 
-const LINKS = {
-  Product: ['Browse Jobs', 'Sponsor Directory', 'Upskill (Soon)', 'Networking (Soon)'],
-  Company: ['About', 'Blog', 'Careers', 'Contact'],
-  Legal: ['Privacy Policy', 'Terms of Service', 'Cookie Policy'],
+interface FooterLink {
+  label: string
+  href: string
+  external?: boolean
+}
+
+const LINKS: Record<string, FooterLink[]> = {
+  Product: [
+    { label: 'Browse Jobs', href: '/jobs' },
+    { label: 'Sponsor Directory', href: '/sponsor-directory' },
+    { label: 'Upskill (Soon)', href: '/upskill' },
+    { label: 'Networking (Soon)', href: '/networking' },
+  ],
+  Company: [
+    { label: 'About', href: 'https://www.zolve.com/about-us', external: true },
+    { label: 'Blog', href: 'https://zolve.com/blog/', external: true },
+    { label: 'Careers', href: 'https://zolve.freshteam.com/jobs', external: true },
+    { label: 'Contact', href: 'https://www.zolve.com/help', external: true },
+  ],
+  Legal: [
+    { label: 'Privacy Policy', href: '/privacy' },
+    { label: 'Terms of Service', href: '/terms' },
+    { label: 'Cookie Policy', href: '/privacy#cookies' },
+  ],
 }
 
 export default function FooterSection() {
@@ -32,13 +53,24 @@ export default function FooterSection() {
               <p className="text-white font-semibold text-sm mb-4">{section}</p>
               <ul className="space-y-2.5">
                 {items.map((item) => (
-                  <li key={item}>
-                    <a
-                      href="#"
-                      className="text-navy-400 hover:text-white text-sm transition-colors duration-150 cursor-pointer"
-                    >
-                      {item}
-                    </a>
+                  <li key={item.label}>
+                    {item.external ? (
+                      <a
+                        href={item.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-navy-400 hover:text-white text-sm transition-colors duration-150 cursor-pointer"
+                      >
+                        {item.label}
+                      </a>
+                    ) : (
+                      <Link
+                        href={item.href}
+                        className="text-navy-400 hover:text-white text-sm transition-colors duration-150 cursor-pointer"
+                      >
+                        {item.label}
+                      </Link>
+                    )}
                   </li>
                 ))}
               </ul>

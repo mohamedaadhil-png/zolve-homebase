@@ -2,9 +2,9 @@
 
 import { useEffect, useRef, useState, useCallback, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Search, SlidersHorizontal, X, Loader2 } from 'lucide-react'
+import { Search, X, Loader2 } from 'lucide-react'
 import JobCard from '@/components/jobs/JobCard'
-import FilterPanel, { type JobFilters } from '@/components/jobs/FilterPanel'
+import FilterBar, { type JobFilters } from '@/components/jobs/FilterBar'
 
 interface Job {
   id: string
@@ -32,7 +32,7 @@ function JobsContent() {
   const [loadingMore, setLoadingMore] = useState(false)
   const [offset, setOffset] = useState(0)
   const [hasMore, setHasMore] = useState(true)
-  const [showFilters, setShowFilters] = useState(false)
+  const [stateOptions, setStateOptions] = useState<{ state: string; count: number }[]>([])
   const observerRef = useRef<IntersectionObserver | null>(null)
   const sentinelRef = useRef<HTMLDivElement>(null)
   const LIMIT = 20
@@ -42,6 +42,16 @@ function JobsContent() {
   const job_types = searchParams.get('job_types') ?? ''
   const seniority = searchParams.get('seniority') ?? ''
   const remote = searchParams.get('remote') ?? ''
+  const roles = searchParams.get('roles') ?? ''
+  const statesParam = searchParams.get('states') ?? ''
+
+  // Load Location dropdown options once.
+  useEffect(() => {
+    fetch('/api/jobs/facets')
+      .then((r) => r.json())
+      .then((d) => setStateOptions(d.states ?? []))
+      .catch(() => {})
+  }, [])
 
   const buildQuery = useCallback(
     (off: number) => {
@@ -51,11 +61,13 @@ function JobsContent() {
       if (job_types) params.set('job_types', job_types)
       if (seniority) params.set('seniority', seniority)
       if (remote) params.set('remote', remote)
+      if (roles) params.set('roles', roles)
+      if (statesParam) params.set('states', statesParam)
       params.set('limit', String(LIMIT))
       params.set('offset', String(off))
       return `/api/jobs?${params.toString()}`
     },
-    [q, visa_types, job_types, seniority, remote]
+    [q, visa_types, job_types, seniority, remote, roles, statesParam]
   )
 
   // Initial load / filter change
@@ -109,6 +121,8 @@ function JobsContent() {
   }, [buildQuery, hasMore, loading, loadingMore, offset])
 
   const filters: JobFilters = {
+    role: roles ? roles.split(',') : [],
+    state: statesParam ? statesParam.split(',') : [],
     visaType: visa_types ? visa_types.split(',') : [],
     jobType: job_types ? job_types.split(',') : [],
     experience: seniority ? seniority.split(',') : [],
@@ -117,6 +131,10 @@ function JobsContent() {
 
   const handleFilterChange = (newFilters: JobFilters) => {
     const params = new URLSearchParams(searchParams.toString())
+    if (newFilters.role.length) params.set('roles', newFilters.role.join(','))
+    else params.delete('roles')
+    if (newFilters.state.length) params.set('states', newFilters.state.join(','))
+    else params.delete('states')
     if (newFilters.visaType.length) params.set('visa_types', newFilters.visaType.join(','))
     else params.delete('visa_types')
     if (newFilters.jobType.length) params.set('job_types', newFilters.jobType.join(','))
@@ -148,45 +166,37 @@ function JobsContent() {
       </div>
 
       {/* Search bar */}
-      <div className="flex gap-3 mb-6">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-          <input
-            type="text"
-            defaultValue={q}
-            placeholder="Search jobs, companies, skills..."
-            onKeyDown={e => {
-              if (e.key === 'Enter') {
-                updateQ((e.target as HTMLInputElement).value)
-              }
-            }}
-            className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#ff6633]/20 focus:border-[#ff6633]"
-          />
-          {q && (
-            <button onClick={() => updateQ('')} className="absolute right-3 top-1/2 -translate-y-1/2">
-              <X className="w-4 h-4 text-slate-400" />
-            </button>
-          )}
-        </div>
-        <button
-          onClick={() => setShowFilters(!showFilters)}
-          className="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-600 hover:border-slate-300 transition-colors"
-        >
-          <SlidersHorizontal className="w-4 h-4" />
-          Filters
-        </button>
+      <div className="relative mb-4">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+        <input
+          type="text"
+          defaultValue={q}
+          placeholder="Search jobs, companies, skills..."
+          onKeyDown={e => {
+            if (e.key === 'Enter') {
+              updateQ((e.target as HTMLInputElement).value)
+            }
+          }}
+          className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#ff6633]/20 focus:border-[#ff6633]"
+        />
+        {q && (
+          <button onClick={() => updateQ('')} className="absolute right-3 top-1/2 -translate-y-1/2">
+            <X className="w-4 h-4 text-slate-400" />
+          </button>
+        )}
       </div>
 
-      <div className="flex gap-6">
-        {/* Filter Panel */}
-        {showFilters && (
-          <div className="w-64 shrink-0">
-            <FilterPanel filters={filters} onChange={handleFilterChange} />
-          </div>
-        )}
+      {/* Filter bar (dropdowns) */}
+      <FilterBar
+        filters={filters}
+        onChange={handleFilterChange}
+        stateOptions={stateOptions}
+        className="mb-6"
+      />
 
+      <div>
         {/* Jobs list */}
-        <div className="flex-1 min-w-0">
+        <div className="min-w-0">
           {/* Result count */}
           <div className="mb-4">
             {loading ? (

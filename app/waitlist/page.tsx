@@ -3,7 +3,9 @@ import LandingPageClient from '@/components/landing/LandingPageClient'
 
 export const revalidate = 3600
 
-export default async function HomePage() {
+// Public pre-launch waitlist. Renders the exact landing page in "waitlist" mode:
+// every CTA scrolls to the signup form just above the footer.
+export default async function WaitlistPage() {
   const supabase = await createClient()
 
   const [{ count: jobCount }, { count: companyCount }] = await Promise.all([
@@ -18,5 +20,11 @@ export default async function HomePage() {
       .eq('sponsor_flag', true),
   ])
 
-  return <LandingPageClient jobCount={jobCount ?? 0} companyCount={companyCount ?? 31} />
+  return (
+    <LandingPageClient
+      jobCount={jobCount ?? 0}
+      companyCount={companyCount ?? 31}
+      mode="waitlist"
+    />
+  )
 }

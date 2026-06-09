@@ -14,16 +14,26 @@ import JourneyFeatures from './JourneyFeatures'
 import ZolveCrossSell from './ZolveCrossSell'
 import TestimonialSection from './TestimonialSection'
 import FooterSection from './FooterSection'
+import WaitlistForm from './WaitlistForm'
 
 interface LandingPageClientProps {
   jobCount: number
   companyCount?: number
+  /** 'app' = normal product CTAs (default). 'waitlist' = CTAs scroll to the
+   *  waitlist form and are relabelled "Join the waitlist". */
+  mode?: 'app' | 'waitlist'
 }
 
-export default function LandingPageClient({ jobCount, companyCount = 31 }: LandingPageClientProps) {
+export default function LandingPageClient({
+  jobCount,
+  companyCount = 31,
+  mode = 'app',
+}: LandingPageClientProps) {
   const router = useRouter()
   const supabase = createClient()
   const [previewJobs, setPreviewJobs] = useState<any[]>([])
+  const isWaitlist = mode === 'waitlist'
+  const ctaLabel = isWaitlist ? 'Join the waitlist' : undefined
 
   useEffect(() => {
     async function fetchPreviewJobs() {
@@ -35,7 +45,7 @@ export default function LandingPageClient({ jobCount, companyCount = 31 }: Landi
           companies (canonical_name, logo_url, sponsor_score)
         `)
         .eq('is_active', true)
-        .eq('role_category', 'SWE')
+        .eq('country', 'US')
         .order('posted_at', { ascending: false })
         .limit(6)
 
@@ -53,31 +63,42 @@ export default function LandingPageClient({ jobCount, companyCount = 31 }: Landi
   }, [])
 
   const handleEnroll = async () => {
+    if (isWaitlist) {
+      document.getElementById('waitlist')?.scrollIntoView({ behavior: 'smooth' })
+      return
+    }
     const { data } = await supabase.auth.getSession()
     router.push(data.session ? '/dashboard' : '/login')
   }
 
   return (
     <div className="min-h-screen bg-white">
-      <LoggedOutNav />
+      <LoggedOutNav onSignIn={isWaitlist ? handleEnroll : undefined} ctaLabel={ctaLabel} />
       {/* 1 — Hero */}
-      <HeroSection jobCount={jobCount} onEnroll={handleEnroll} />
+      <HeroSection
+        jobCount={jobCount}
+        onEnroll={handleEnroll}
+        ctaLabel={ctaLabel}
+        hideSecondaryCta={isWaitlist}
+      />
       {/* 2 — Hiring partners + real recruiter logos */}
       <PartnersMarquee jobCount={jobCount} companyCount={companyCount} />
       {/* 3 — Live job preview */}
-      <JobPreviewSection jobs={previewJobs} totalCount={jobCount} onEnroll={handleEnroll} />
+      <JobPreviewSection jobs={previewJobs} totalCount={jobCount} onEnroll={handleEnroll} ctaLabel={ctaLabel} />
       {/* 4 — Pinned scroll: Upskill / Events / Resources */}
       <CareerPlatformPinnedSection />
       {/* 5 — Product demo video */}
       <VideoSection />
       {/* 5 — Feature bento */}
-      <FeatureBento />
+      <FeatureBento {...(isWaitlist ? { ctaLabel, onCta: handleEnroll } : {})} />
       {/* 6 — Visa journey, 3-column */}
       <JourneyFeatures />
       {/* 7 — Zolve product cross-sell */}
       <ZolveCrossSell />
       {/* 8 — Testimonial */}
       <TestimonialSection />
+      {/* Waitlist capture — only in waitlist mode, just before the footer */}
+      {isWaitlist && <WaitlistForm />}
       {/* 9 — Footer */}
       <FooterSection />
     </div>

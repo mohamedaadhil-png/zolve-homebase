@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import Navbar from '@/components/layout/Navbar'
+import TopBar from '@/components/layout/TopBar'
 import Sidebar from '@/components/layout/Sidebar'
 import BottomNav from '@/components/layout/BottomNav'
 
@@ -32,8 +32,8 @@ export default async function DashboardLayout({
 
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
-      {/* Top Navbar */}
-      <Navbar user={navUser} />
+      {/* Top Navbar + global search */}
+      <TopBar user={navUser} />
 
       <div className="flex pt-14">
         {/* Left Sidebar — hidden on mobile */}

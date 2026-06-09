@@ -23,6 +23,8 @@ interface JobPreviewSectionProps {
   jobs: PreviewJob[]
   totalCount: number
   onEnroll: () => void
+  /** Overrides the CTA label (e.g. "Join the waitlist"). */
+  ctaLabel?: string
 }
 
 function CompanyLogo({ name, logoUrl }: { name: string; logoUrl?: string | null }) {
@@ -94,7 +96,7 @@ function JobSnapCard({
   )
 }
 
-function JobDetailPreview({ job, onEnroll }: { job: PreviewJob; onEnroll: () => void }) {
+function JobDetailPreview({ job, onEnroll, ctaLabel }: { job: PreviewJob; onEnroll: () => void; ctaLabel?: string }) {
   const location = job.locations?.[0]
   const locationStr = location?.is_remote
     ? 'Remote'
@@ -162,7 +164,7 @@ function JobDetailPreview({ job, onEnroll }: { job: PreviewJob; onEnroll: () => 
         onClick={onEnroll}
         className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-[#ff6633] hover:bg-[#e5572b] text-white font-bold rounded-xl transition-colors duration-200 cursor-pointer"
       >
-        Enroll to Apply
+        {ctaLabel ?? 'Enroll to Apply'}
         <ExternalLink className="w-4 h-4" aria-hidden="true" />
       </button>
       <p className="text-center text-navy-400 text-xs mt-2">Free to join · Government-verified data</p>
@@ -170,7 +172,7 @@ function JobDetailPreview({ job, onEnroll }: { job: PreviewJob; onEnroll: () => 
   )
 }
 
-export default function JobPreviewSection({ jobs, totalCount, onEnroll }: JobPreviewSectionProps) {
+export default function JobPreviewSection({ jobs, totalCount, onEnroll, ctaLabel }: JobPreviewSectionProps) {
   const [selectedIndex, setSelectedIndex] = useState(0)
   const displayJobs = jobs.slice(0, 6)
   const selectedJob = displayJobs[selectedIndex]
@@ -205,7 +207,7 @@ export default function JobPreviewSection({ jobs, totalCount, onEnroll }: JobPre
               onClick={onEnroll}
               className="w-full mt-2 flex items-center justify-center gap-2 px-6 py-3.5 bg-[#ff6633] hover:bg-[#e5572b] text-white font-bold rounded-xl transition-colors duration-200 cursor-pointer"
             >
-              Enroll today — it&apos;s free
+              {ctaLabel ?? "Enroll today — it's free"}
               <ChevronRight className="w-5 h-5" aria-hidden="true" />
             </button>
           </div>
@@ -213,7 +215,7 @@ export default function JobPreviewSection({ jobs, totalCount, onEnroll }: JobPre
           {/* Right: detail preview */}
           {selectedJob && (
             <div className="lg:sticky lg:top-24">
-              <JobDetailPreview job={selectedJob} onEnroll={onEnroll} />
+              <JobDetailPreview job={selectedJob} onEnroll={onEnroll} ctaLabel={ctaLabel} />
             </div>
           )}
         </div>

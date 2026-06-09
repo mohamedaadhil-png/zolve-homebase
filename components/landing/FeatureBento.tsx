@@ -31,7 +31,15 @@ function SponsorScoreDial() {
   )
 }
 
-export default function FeatureBento() {
+interface FeatureBentoProps {
+  /** Overrides the header CTA label (e.g. "Join the waitlist"). */
+  ctaLabel?: string
+  /** When provided, the header CTA becomes a button calling this instead of
+   *  linking to /jobs (used in waitlist mode to scroll to the form). */
+  onCta?: () => void
+}
+
+export default function FeatureBento({ ctaLabel, onCta }: FeatureBentoProps = {}) {
   return (
     <section className="bg-[#FBFAF7] py-20 sm:py-28" aria-label="Features">
       <div className="max-w-6xl mx-auto px-6">
@@ -41,12 +49,21 @@ export default function FeatureBento() {
             Crafted to de-risk your{' '}
             <span className="font-serif-accent text-[#ff6633]">job hunt</span>
           </h2>
-          <a
-            href="/jobs"
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#131310] text-white text-sm font-semibold rounded-full hover:bg-[#1f1f1c] transition-colors duration-200 cursor-pointer self-start sm:self-auto"
-          >
-            Browse jobs <ArrowUpRight className="w-4 h-4" aria-hidden="true" />
-          </a>
+          {onCta ? (
+            <button
+              onClick={onCta}
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#131310] text-white text-sm font-semibold rounded-full hover:bg-[#1f1f1c] transition-colors duration-200 cursor-pointer self-start sm:self-auto"
+            >
+              {ctaLabel ?? 'Join the waitlist'} <ArrowUpRight className="w-4 h-4" aria-hidden="true" />
+            </button>
+          ) : (
+            <a
+              href="/jobs"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#131310] text-white text-sm font-semibold rounded-full hover:bg-[#1f1f1c] transition-colors duration-200 cursor-pointer self-start sm:self-auto"
+            >
+              Browse jobs <ArrowUpRight className="w-4 h-4" aria-hidden="true" />
+            </a>
+          )}
         </div>
 
         {/* Bento grid */}

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { allEvents } from '@/lib/events/data'
 
 const COMING_SOON = [
   { title: 'Resume Review', category: 'Upskill', description: '30-min session · $49' },
@@ -17,7 +18,7 @@ export async function GET(request: NextRequest) {
   try {
     const q = request.nextUrl.searchParams.get('q') || ''
     if (!q.trim()) {
-      return NextResponse.json({ jobs: [], companies: [], coming_soon: [] })
+      return NextResponse.json({ jobs: [], companies: [], events: [], coming_soon: [] })
     }
 
     const supabase = await createClient()
@@ -45,9 +46,30 @@ export async function GET(request: NextRequest) {
         item.category.toLowerCase().includes(q.toLowerCase())
     )
 
+    const ql = q.toLowerCase()
+    const events = allEvents
+      .filter(
+        (e) =>
+          e.title.toLowerCase().includes(ql) ||
+          e.subtitle?.toLowerCase().includes(ql) ||
+          e.speakerName?.toLowerCase().includes(ql) ||
+          e.tags.some((t) => t.toLowerCase().includes(ql))
+      )
+      // Upcoming first, then most recent past
+      .sort((a, b) => (a.category === b.category ? 0 : a.category === 'upcoming' ? -1 : 1))
+      .slice(0, 5)
+      .map((e) => ({
+        id: e.id,
+        title: e.title,
+        category: e.category,
+        dateText: e.dateText,
+        speakerName: e.speakerName ?? null,
+      }))
+
     return NextResponse.json({
       jobs: jobsRes.data || [],
       companies: companiesRes.data || [],
+      events,
       coming_soon: comingSoon,
     })
   } catch (err) {

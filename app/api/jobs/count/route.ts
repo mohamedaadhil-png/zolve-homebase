@@ -8,7 +8,7 @@ export async function GET() {
     .from('job_postings')
     .select('*', { count: 'exact', head: true })
     .eq('is_active', true)
-    .eq('role_category', 'SWE')
+    .eq('country', 'US')
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 })

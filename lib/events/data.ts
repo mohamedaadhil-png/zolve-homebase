@@ -21,6 +21,8 @@ export interface EventItem {
   speakerPhoto?: string
   youtubeUrl?: string
   thumbnail?: string
+  /** Optional banner image for upcoming events (falls back to a themed placeholder) */
+  bannerImage?: string
   tags: string[]
   registrationPlatform?: string
 }

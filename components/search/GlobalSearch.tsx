@@ -1,14 +1,17 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import { Search, X, Briefcase, Building2, Clock } from 'lucide-react'
+import { Search, X, Briefcase, Building2, Calendar, Clock } from 'lucide-react'
 import { useState, useEffect, useRef, useCallback } from 'react'
+import { useRouter } from 'next/navigation'
 
 interface SearchResult {
   id: string
-  type: 'job' | 'company' | 'coming-soon'
+  type: 'job' | 'company' | 'event' | 'coming-soon'
   title: string
   subtitle: string
+  /** Route to navigate to when the result is selected */
+  href: string
 }
 
 interface GlobalSearchProps {
@@ -19,15 +22,21 @@ interface GlobalSearchProps {
   loading?: boolean
 }
 
+// Stable empty-array reference so the `results` default doesn't create a new
+// array every render (which made the `[results]` effect loop infinitely).
+const EMPTY_RESULTS: SearchResult[] = []
+
 const typeIcons = {
   job: Briefcase,
   company: Building2,
+  event: Calendar,
   'coming-soon': Clock,
 }
 
 const typeLabels = {
   job: 'Jobs',
   company: 'Companies',
+  event: 'Events',
   'coming-soon': 'Coming Soon',
 }
 
@@ -35,13 +44,22 @@ export default function GlobalSearch({
   open,
   onClose,
   onSearch,
-  results = [],
+  results = EMPTY_RESULTS,
   loading = false,
 }: GlobalSearchProps) {
   const [query, setQuery] = useState('')
   const [activeIndex, setActiveIndex] = useState(0)
   const [localResults, setLocalResults] = useState<SearchResult[]>(results)
   const inputRef = useRef<HTMLInputElement>(null)
+  const router = useRouter()
+
+  const handleSelect = useCallback(
+    (result: SearchResult) => {
+      onClose()
+      router.push(result.href)
+    },
+    [onClose, router]
+  )
 
   // Group results by type
   const grouped = localResults.reduce((acc, r) => {
@@ -77,13 +95,13 @@ export default function GlobalSearch({
         setActiveIndex((i) => Math.max(i - 1, 0))
       }
       if (e.key === 'Enter' && flatResults[activeIndex]) {
-        // Navigate to result
-        onClose()
+        e.preventDefault()
+        handleSelect(flatResults[activeIndex])
       }
     }
     document.addEventListener('keydown', handleKey)
     return () => document.removeEventListener('keydown', handleKey)
-  }, [open, onClose, flatResults, activeIndex])
+  }, [open, onClose, flatResults, activeIndex, handleSelect])
 
   const handleChange = useCallback(
     async (val: string) => {
@@ -101,7 +119,7 @@ export default function GlobalSearch({
 
   if (!open) return null
 
-  const typeOrder: SearchResult['type'][] = ['job', 'company', 'coming-soon']
+  const typeOrder: SearchResult['type'][] = ['job', 'company', 'event', 'coming-soon']
 
   let globalIdx = 0
 
@@ -123,7 +141,7 @@ export default function GlobalSearch({
             type="text"
             value={query}
             onChange={(e) => handleChange(e.target.value)}
-            placeholder="Search jobs, companies…"
+            placeholder="Search jobs, companies, events…"
             className="flex-1 text-base text-navy-800 placeholder:text-navy-400 bg-transparent focus:outline-none"
           />
           {query && (
@@ -180,7 +198,7 @@ export default function GlobalSearch({
                             isActive ? 'bg-[#fff1ec]' : 'hover:bg-navy-50'
                           )}
                           onMouseEnter={() => setActiveIndex(idx)}
-                          onClick={onClose}
+                          onClick={() => handleSelect(result)}
                         >
                           <div
                             className={cn(

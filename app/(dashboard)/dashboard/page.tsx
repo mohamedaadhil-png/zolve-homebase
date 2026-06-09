@@ -40,7 +40,7 @@ export default async function DashboardPage() {
     .from('job_postings')
     .select('*, companies(*)')
     .eq('is_active', true)
-    .eq('role_category', 'SWE')
+    .eq('country', 'US')
   if (preferredTrack) recQuery = recQuery.eq('track', preferredTrack)
 
   let { data: recommendedJobs } = await recQuery
@@ -53,7 +53,7 @@ export default async function DashboardPage() {
       .from('job_postings')
       .select('*, companies(*)')
       .eq('is_active', true)
-      .eq('role_category', 'SWE')
+      .eq('country', 'US')
       .order('posted_at', { ascending: false })
       .limit(6)
     recommendedJobs = fallback

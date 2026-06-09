@@ -3,7 +3,6 @@
 import { cn } from '@/lib/utils'
 import { Check, Circle } from 'lucide-react'
 import Button from '@/components/ui/Button'
-import Link from 'next/link'
 
 interface ProfileItem {
   label: string
@@ -85,12 +84,12 @@ export default function ProfileCompletionCard({
         ))}
       </ul>
 
-      {/* CTA */}
-      <Link href="/profile/edit" className="block">
+      {/* CTA — scrolls to the resume/details form below on the profile page */}
+      <a href="#profile-details" className="block">
         <Button variant="primary" size="sm" className="w-full">
           Complete Profile
         </Button>
-      </Link>
+      </a>
     </div>
   )
 }
