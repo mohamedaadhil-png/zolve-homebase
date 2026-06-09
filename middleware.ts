@@ -2,21 +2,8 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl
-
-  // IMPORTANT: auth/onboarding protection for the app is enforced in the
-  // (dashboard) layout, which runs on the Node runtime. We deliberately do NOT
-  // read the Supabase session here in the general case: on Vercel's Edge runtime
-  // the SSR client's session read wipes the auth cookie, causing a login loop.
-  //
-  // The only reason we need the session in middleware is the pre-launch gate,
-  // so we only touch Supabase when the gate is explicitly enabled.
-  if (process.env.PRELAUNCH !== 'true') {
-    return NextResponse.next()
-  }
-
-  // ── Pre-launch gate ─────────────────────────────────────────────────────────
   let supabaseResponse = NextResponse.next({ request })
+
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -25,7 +12,7 @@ export async function middleware(request: NextRequest) {
         getAll() {
           return request.cookies.getAll()
         },
-        setAll(cookiesToSet: { name: string; value: string; options?: Record<string, unknown> }[]) {
+        setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
           supabaseResponse = NextResponse.next({ request })
           cookiesToSet.forEach(({ name, value, options }) =>
@@ -36,37 +23,69 @@ export async function middleware(request: NextRequest) {
     }
   )
 
+  // Refresh the session and persist rotated tokens. Middleware is the only place
+  // that can reliably write the refreshed auth cookies, so this must run on every
+  // request (do not put logic between createServerClient and getUser).
   const {
-    data: { session },
-  } = await supabase.auth.getSession()
-  const email = session?.user?.email?.toLowerCase()
+    data: { user },
+  } = await supabase.auth.getUser()
 
-  // Public can only reach the waitlist; PRELAUNCH_ALLOW entries see the full site.
-  const isOpenPath =
-    pathname === '/waitlist' ||
-    pathname.startsWith('/api/waitlist') ||
-    pathname === '/login' ||
-    pathname === '/terms' ||
-    pathname === '/privacy' ||
-    pathname.startsWith('/auth/')
+  const { pathname } = request.nextUrl
 
-  if (!isOpenPath) {
-    const allowlist = (process.env.PRELAUNCH_ALLOW ?? '')
-      .split(',')
-      .map((e) => e.trim().toLowerCase())
-      .filter(Boolean)
-    const isAllowed =
-      !!email &&
-      allowlist.some((entry) => {
-        if (entry.startsWith('*@')) return email.endsWith(entry.slice(1))
-        if (entry.startsWith('@')) return email.endsWith(entry)
-        return email === entry
-      })
+  // Redirect while preserving refreshed auth cookies (a bare redirect drops them).
+  const redirectTo = (path: string) => {
+    const res = NextResponse.redirect(new URL(path, request.url))
+    supabaseResponse.cookies.getAll().forEach((cookie) => res.cookies.set(cookie))
+    return res
+  }
 
-    if (!isAllowed) {
-      const res = NextResponse.redirect(new URL('/waitlist', request.url))
-      supabaseResponse.cookies.getAll().forEach((cookie) => res.cookies.set(cookie))
-      return res
+  // ── Pre-launch gate ─────────────────────────────────────────────────────────
+  if (process.env.PRELAUNCH === 'true') {
+    const isOpenPath =
+      pathname === '/waitlist' ||
+      pathname.startsWith('/api/waitlist') ||
+      pathname === '/login' ||
+      pathname === '/terms' ||
+      pathname === '/privacy' ||
+      pathname.startsWith('/auth/')
+
+    if (!isOpenPath) {
+      const allowlist = (process.env.PRELAUNCH_ALLOW ?? '')
+        .split(',')
+        .map((e) => e.trim().toLowerCase())
+        .filter(Boolean)
+      const email = user?.email?.toLowerCase()
+      const isAllowed =
+        !!email &&
+        allowlist.some((entry) => {
+          if (entry.startsWith('*@')) return email.endsWith(entry.slice(1))
+          if (entry.startsWith('@')) return email.endsWith(entry)
+          return email === entry
+        })
+
+      if (!isAllowed) return redirectTo('/waitlist')
+    }
+  }
+
+  // Protect dashboard and profile routes
+  if ((pathname.startsWith('/dashboard') || pathname.startsWith('/profile')) && !user) {
+    return redirectTo('/login')
+  }
+
+  // Redirect logged-in users away from login
+  if (pathname === '/login' && user) {
+    return redirectTo('/dashboard')
+  }
+
+  // Onboarding gate for authenticated users on protected routes
+  if (user && (pathname.startsWith('/dashboard') || pathname.startsWith('/profile'))) {
+    const { data: userData } = await supabase
+      .from('users')
+      .select('onboarding_complete')
+      .eq('id', user.id)
+      .single()
+    if (userData && userData.onboarding_complete === false) {
+      return redirectTo('/onboarding')
     }
   }
 
