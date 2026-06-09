@@ -20,14 +20,21 @@ export default async function DashboardLayout({
 
   const { data: userData } = await supabase
     .from('users')
-    .select('name, email, avatar_url, onboarding_complete')
+    .select('name, email, onboarding_complete')
     .eq('id', user.id)
     .single()
 
+  // Google SSO profile data lives in user_metadata (full_name, avatar_url/picture).
+  const meta = (user.user_metadata ?? {}) as Record<string, string | undefined>
   const navUser = {
-    name: userData?.name ?? 'User',
-    email: userData?.email ?? '',
-    avatarUrl: userData?.avatar_url ?? undefined,
+    name:
+      userData?.name ||
+      meta.full_name ||
+      meta.name ||
+      user.email?.split('@')[0] ||
+      'User',
+    email: userData?.email || user.email || '',
+    avatarUrl: meta.avatar_url || meta.picture || undefined,
   }
 
   return (
