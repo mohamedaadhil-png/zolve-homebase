@@ -33,7 +33,10 @@ export default function LandingPageClient({
   const supabase = createClient()
   const [previewJobs, setPreviewJobs] = useState<any[]>([])
   const isWaitlist = mode === 'waitlist'
+  // Section CTAs keep their app-mode defaults (e.g. "Enroll today"); only the
+  // nav button gets an explicit label so it reads "Get Started" / "Join the waitlist".
   const ctaLabel = isWaitlist ? 'Join the waitlist' : undefined
+  const navLabel = isWaitlist ? 'Join the waitlist' : 'Get Started'
 
   useEffect(() => {
     async function fetchPreviewJobs() {
@@ -73,7 +76,7 @@ export default function LandingPageClient({
 
   return (
     <div className="min-h-screen bg-white">
-      <LoggedOutNav onSignIn={isWaitlist ? handleEnroll : undefined} ctaLabel={ctaLabel} />
+      <LoggedOutNav onSignIn={handleEnroll} ctaLabel={navLabel} />
       {/* 1 — Hero */}
       <HeroSection
         jobCount={jobCount}
